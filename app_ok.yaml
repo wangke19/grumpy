@@ -4,5 +4,5 @@ metadata:
   name: smooth-app
 spec:
   containers:
-  - image: busybox
+  - image: quay.io/openshifttest/hello-openshift:multiarch
     name: smooth-app

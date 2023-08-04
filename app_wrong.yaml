@@ -4,5 +4,5 @@ metadata:
   name: not-smooth-app
 spec:
   containers:
-  - image: busybox
+  - image: quay.io/openshifttest/hello-openshift:multiarch
     name: not-smooth-app

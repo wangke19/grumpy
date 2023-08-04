@@ -14,7 +14,7 @@ spec:
   selector:
     name: grumpy 
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grumpy
@@ -23,15 +23,18 @@ metadata:
     name: grumpy
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      name: grumpy
   template:
     metadata:
-      name: grumpy 
+      name: grumpy
       labels:
         name: grumpy
     spec:
       containers:
         - name: webhook
-          image: pipo02mix/grumpy:1.0.0
+          image: quay.io/wangke19/grumpywebhook:latest
           imagePullPolicy: Always
           args:
             - -alsologtostderr
@@ -40,7 +43,7 @@ spec:
             - 2>&1
           resources:
             limits:
-              memory: 50Mi
+              memory: 256Mi
               cpu: 300m
             requests:
               memory: 00Mi
@@ -60,17 +63,17 @@ spec:
         - name: logs
           emptyDir: {}
 ---
-apiVersion: admissionregistration.k8s.io/v1beta1
+apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
   name: grumpy
 webhooks:
-  - name: grumpy.pipo02mix.org
+  - name: grumpy.giantswarm.io
     clientConfig:
       service:
         name: grumpy
         namespace: default
-        path: "/validate"
+        url: "https://grumpy.default.apps.kewang-0113op1.qe.devcluster.openshift.com/validate"
       caBundle: "${CA_BUNDLE}"
     rules:
       - operations: ["CREATE","UPDATE"]
@@ -78,3 +81,5 @@ webhooks:
         apiVersions: ["v1"]
         resources: ["pods"]
     failurePolicy: Ignore
+    admissionReviewVersions: ["v1", "v1beta1"]
+    sideEffects: None

@@ -3,23 +3,23 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/golang/glog"
 	"k8s.io/api/admission/v1beta1"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-//GrumpyServerHandler listen to admission requests and serve responses
+// GrumpyServerHandler listen to admission requests and serve responses
 type GrumpyServerHandler struct {
 }
 
 func (gs *GrumpyServerHandler) serve(w http.ResponseWriter, r *http.Request) {
 	var body []byte
 	if r.Body != nil {
-		if data, err := ioutil.ReadAll(r.Body); err == nil {
+		if data, err := io.ReadAll(r.Body); err == nil {
 			body = data
 		}
 	}
@@ -48,7 +48,7 @@ func (gs *GrumpyServerHandler) serve(w http.ResponseWriter, r *http.Request) {
 		glog.Error("error deserializing pod")
 		return
 	}
-	if pod.Name == "smooth-app" {
+	if pod.Name != "smooth-app" {
 		return
 	}
 
